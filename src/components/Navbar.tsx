@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sun, Moon, Menu, X, LogIn, LogOut } from "lucide-react";
@@ -22,28 +23,26 @@ export const Navbar = () => {
   };
 
   const handleLogin = () => {
-    setIsLoggedIn(!isLoggedIn);
-    toast({
-      title: isLoggedIn ? 'Successfully logged out' : 'Successfully logged in',
-      duration: 2000,
-    });
-    if (!isLoggedIn) {
-      navigate('/dashboard'); // Assuming you have a dashboard route
+    if (isLoggedIn) {
+      setIsLoggedIn(false);
+      toast({
+        title: 'Successfully logged out',
+        duration: 2000,
+      });
+      navigate('/');
+    } else {
+      navigate('/login');
     }
   };
 
   const handleSignUp = () => {
-    navigate('/signup'); // Assuming you have a signup route
-    toast({
-      title: 'Welcome to sign up!',
-      duration: 2000,
-    });
+    navigate('/signup');
   };
 
   const menuItems = [
-    { label: "Features", href: "#features" },
-    { label: "Testimonials", href: "#testimonials" },
-    { label: "Pricing", href: "#pricing" },
+    { label: "Features", path: "/features" },
+    { label: "Testimonials", path: "/testimonials" },
+    { label: "Pricing", path: "/pricing" },
   ];
 
   return (
@@ -51,20 +50,27 @@ export const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <a href="/" className="text-xl font-bold text-primary">
+          <a 
+            href="/" 
+            className="text-xl font-bold text-primary cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate('/');
+            }}
+          >
             YourSaaS
           </a>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
             {menuItems.map((item) => (
-              <a
+              <button
                 key={item.label}
-                href={item.href}
+                onClick={() => navigate(item.path)}
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 {item.label}
-              </a>
+              </button>
             ))}
           </div>
 
@@ -131,14 +137,16 @@ export const Navbar = () => {
           >
             <div className="container mx-auto px-4 py-4 space-y-4">
               {menuItems.map((item) => (
-                <a
+                <button
                   key={item.label}
-                  href={item.href}
-                  className="block text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={() => {
+                    navigate(item.path);
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full text-left text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {item.label}
-                </a>
+                </button>
               ))}
               <div className="flex items-center space-x-4 pt-4 border-t">
                 <Button
