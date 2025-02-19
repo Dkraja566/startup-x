@@ -1,37 +1,77 @@
 
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Play, Pause, SkipBack } from "lucide-react";
-import { useState } from "react";
+import { Play, Pause, SkipBack, Volume2, VolumeX } from "lucide-react";
+import { useState, useRef } from "react";
 import { Navbar } from "@/components/Navbar";
 
 const Demo = () => {
   const navigate = useNavigate();
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handlePlayPause = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const handleRestart = () => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="container mx-auto px-4 pt-24">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl font-bold mb-6">Product Demo</h1>
-          <div className="aspect-video bg-muted rounded-lg mb-6">
-            {/* Add your video or demo content here */}
-            <div className="w-full h-full flex items-center justify-center">
-              <p className="text-muted-foreground">Demo Content</p>
-            </div>
+          <h1 className="text-4xl font-bold mb-6">Experience AI in Action</h1>
+          <div className="aspect-video bg-muted rounded-lg mb-6 overflow-hidden relative">
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              onEnded={() => setIsPlaying(false)}
+              loop
+            >
+              <source
+                src="https://cdn.coverr.co/videos/coverr-artificial-intelligence-network-3733/1080p.mp4"
+                type="video/mp4"
+              />
+              Your browser does not support the video tag.
+            </video>
+            {/* Overlay gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
           </div>
           <div className="flex justify-center gap-4">
             <Button
               variant="outline"
               size="icon"
-              onClick={() => setIsPlaying(false)}
+              onClick={handleRestart}
+              className="rounded-full hover:scale-110 transition-transform"
             >
               <SkipBack className="h-4 w-4" />
             </Button>
             <Button
               size="icon"
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={handlePlayPause}
+              className="rounded-full hover:scale-110 transition-transform"
             >
               {isPlaying ? (
                 <Pause className="h-4 w-4" />
@@ -39,9 +79,28 @@ const Demo = () => {
                 <Play className="h-4 w-4" />
               )}
             </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={toggleMute}
+              className="rounded-full hover:scale-110 transition-transform"
+            >
+              {isMuted ? (
+                <VolumeX className="h-4 w-4" />
+              ) : (
+                <Volume2 className="h-4 w-4" />
+              )}
+            </Button>
           </div>
-          <div className="mt-8">
-            <Button onClick={() => navigate("/signup")}>
+          <div className="mt-8 space-y-4">
+            <p className="text-muted-foreground">
+              Watch how our AI-powered platform transforms business operations
+              and drives unprecedented growth.
+            </p>
+            <Button 
+              onClick={() => navigate("/signup")}
+              className="rounded-full hover:scale-105 transition-transform"
+            >
               Get Started Now
             </Button>
           </div>
