@@ -1,21 +1,43 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sun, Moon, Menu, X, LogIn, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const toggleTheme = () => {
     setIsDark(!isDark);
     document.documentElement.classList.toggle("dark");
+    toast({
+      title: `Theme changed to ${isDark ? 'light' : 'dark'} mode`,
+      duration: 2000,
+    });
   };
 
-  const toggleLogin = () => {
+  const handleLogin = () => {
     setIsLoggedIn(!isLoggedIn);
+    toast({
+      title: isLoggedIn ? 'Successfully logged out' : 'Successfully logged in',
+      duration: 2000,
+    });
+    if (!isLoggedIn) {
+      navigate('/dashboard'); // Assuming you have a dashboard route
+    }
+  };
+
+  const handleSignUp = () => {
+    navigate('/signup'); // Assuming you have a signup route
+    toast({
+      title: 'Welcome to sign up!',
+      duration: 2000,
+    });
   };
 
   const menuItems = [
@@ -63,7 +85,7 @@ export const Navbar = () => {
             <Button
               variant="outline"
               className="rounded-full"
-              onClick={toggleLogin}
+              onClick={handleLogin}
             >
               {isLoggedIn ? (
                 <>
@@ -78,7 +100,9 @@ export const Navbar = () => {
               )}
             </Button>
             {!isLoggedIn && (
-              <Button className="rounded-full">Sign Up</Button>
+              <Button className="rounded-full" onClick={handleSignUp}>
+                Sign Up
+              </Button>
             )}
           </div>
 
@@ -132,7 +156,7 @@ export const Navbar = () => {
                 <Button
                   variant="outline"
                   className="rounded-full flex-1"
-                  onClick={toggleLogin}
+                  onClick={handleLogin}
                 >
                   {isLoggedIn ? (
                     <>
@@ -147,7 +171,9 @@ export const Navbar = () => {
                   )}
                 </Button>
                 {!isLoggedIn && (
-                  <Button className="rounded-full flex-1">Sign Up</Button>
+                  <Button className="rounded-full flex-1" onClick={handleSignUp}>
+                    Sign Up
+                  </Button>
                 )}
               </div>
             </div>
