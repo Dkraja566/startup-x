@@ -6,20 +6,21 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const PLANS = {
   starter: {
-    price: 'price_starter', // Replace with actual Stripe price ID
+    price: 'price_1234', // Replace with your actual Stripe price ID for starter plan
     name: 'Starter'
   },
   professional: {
-    price: 'price_professional', // Replace with actual Stripe price ID
+    price: 'price_5678', // Replace with your actual Stripe price ID for professional plan
     name: 'Professional'
   },
   enterprise: {
-    price: 'price_enterprise', // Replace with actual Stripe price ID
+    price: 'price_9012', // Replace with your actual Stripe price ID for enterprise plan
     name: 'Enterprise'
   }
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -37,11 +38,11 @@ serve(async (req) => {
         },
       }
     )
-    const {
-      data: { user },
-    } = await supabaseClient.auth.getUser()
+    
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
 
-    if (!user) {
+    if (userError || !user) {
+      console.error('Auth error:', userError)
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         {
@@ -62,6 +63,8 @@ serve(async (req) => {
       )
     }
 
+    console.log('Creating checkout session for user:', user.id, 'plan:', planId)
+
     // Create a checkout session
     const session = await stripe.checkout.sessions.create({
       customer_email: user.email,
@@ -80,6 +83,8 @@ serve(async (req) => {
       },
     })
 
+    console.log('Checkout session created:', session.id)
+
     return new Response(
       JSON.stringify({ url: session.url }),
       {
@@ -88,6 +93,7 @@ serve(async (req) => {
       }
     )
   } catch (error) {
+    console.error('Error:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       {
