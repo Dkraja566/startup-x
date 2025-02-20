@@ -1,64 +1,77 @@
 
-import { Check, Sparkles } from "lucide-react";
+import { Check, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 export const Pricing = () => {
-  const tiers = [
-    {
-      name: "Starter",
-      price: "$29",
-      billing: "per month",
-      description: "Perfect for small teams and startups",
-      features: [
-        "Up to 5 team members",
-        "Basic analytics",
-        "24/7 support",
-        "1GB storage",
-        "API access",
-        "Weekly reports",
-      ],
-      popular: false,
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const { data: plans, isLoading } = useQuery({
+    queryKey: ["plans"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("plans").select("*");
+      if (error) throw error;
+      return data;
     },
-    {
-      name: "Professional",
-      price: "$99",
-      billing: "per month",
-      description: "Ideal for growing businesses",
-      features: [
-        "Up to 20 team members",
-        "Advanced analytics",
-        "Priority support",
-        "10GB storage",
-        "Custom integrations",
-        "Daily backups",
-        "Custom reporting",
-        "Team collaboration",
-      ],
-      popular: true,
-    },
-    {
-      name: "Enterprise",
-      price: "Custom",
-      billing: "contact us",
-      description: "For large organizations",
-      features: [
-        "Unlimited team members",
-        "Enterprise analytics",
-        "Dedicated support",
-        "Unlimited storage",
-        "Custom integrations",
-        "SLA guarantee",
-        "24/7 phone support",
-        "Custom AI models",
-        "On-premise option",
-      ],
-      popular: false,
-    },
-  ];
+  });
+
+  const handleSubscribe = async (planId: string) => {
+    if (!user) {
+      toast({
+        title: "Please login first",
+        description: "You need to be logged in to subscribe to a plan",
+        variant: "default",
+      });
+      navigate("/login");
+      return;
+    }
+
+    setLoadingPlan(planId);
+    try {
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          planId,
+          successUrl: `${window.location.origin}/dashboard?success=true`,
+          cancelUrl: `${window.location.origin}/pricing?canceled=true`,
+        }),
+      });
+
+      const { url } = await response.json();
+      window.location.href = url;
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to initiate checkout. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
-    <section className="py-24 bg-muted/50">
+    <section className="py-12 md:py-24 bg-muted/50">
       <div className="container px-4 md:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -74,50 +87,62 @@ export const Pricing = () => {
             Choose the perfect plan for your business needs. All plans include a 14-day free trial.
           </p>
         </motion.div>
-        <div className="grid md:grid-cols-3 gap-8 mt-16">
-          {tiers.map((tier, index) => (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-16">
+          {plans?.map((tier, index) => (
             <motion.div
-              key={index}
+              key={tier.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className={`relative group rounded-2xl p-6 bg-background shadow-lg hover:shadow-xl transition-all duration-300 ${
-                tier.popular ? "ring-2 ring-primary" : ""
+              className={`relative flex flex-col group rounded-2xl p-6 bg-background shadow-lg hover:shadow-xl transition-all duration-300 ${
+                tier.id === "professional" ? "ring-2 ring-primary" : ""
               }`}
             >
-              {tier.popular && (
+              {tier.id === "professional" && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-primary-foreground rounded-full text-sm font-medium flex items-center gap-1">
                   <Sparkles className="h-4 w-4" />
                   Most Popular
                 </div>
               )}
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="space-y-4">
+              <div className="flex-1 space-y-4">
                 <h3 className="text-2xl font-bold">{tier.name}</h3>
                 <div className="flex items-baseline gap-1">
-                  <div className="text-4xl font-bold">{tier.price}</div>
-                  <div className="text-sm text-muted-foreground">/{tier.billing}</div>
+                  <div className="text-4xl font-bold">${tier.price}</div>
+                  <div className="text-sm text-muted-foreground">/{tier.billing_period}</div>
                 </div>
-                <p className="text-muted-foreground">{tier.description}</p>
                 <Button
                   className={`w-full rounded-full ${
-                    tier.popular ? "bg-primary" : ""
+                    tier.id === "professional" ? "bg-primary" : ""
                   }`}
+                  onClick={() => handleSubscribe(tier.id)}
+                  disabled={loadingPlan === tier.id}
                 >
-                  Get Started
+                  {loadingPlan === tier.id ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  ) : null}
+                  {tier.id === "enterprise" ? "Contact Sales" : "Get Started"}
                 </Button>
                 <ul className="space-y-2 pt-4 border-t">
-                  {tier.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center gap-2">
-                      <Check className={`h-4 w-4 ${tier.popular ? "text-primary" : ""}`} />
-                      <span>{feature}</span>
+                  {(tier.features as string[]).map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-start gap-2">
+                      <Check className={`h-4 w-4 mt-1 ${tier.id === "professional" ? "text-primary" : ""}`} />
+                      <span className="text-sm">{feature}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             </motion.div>
           ))}
+        </div>
+        <div className="mt-12 text-center">
+          <p className="text-muted-foreground">
+            Need a custom plan? {" "}
+            <a href="mailto:sales@example.com" className="text-primary hover:underline">
+              Contact our sales team
+            </a>
+          </p>
         </div>
       </div>
     </section>
