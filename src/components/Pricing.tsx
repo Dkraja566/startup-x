@@ -37,13 +37,19 @@ export const Pricing = () => {
 
     setLoadingPlan(planId);
     try {
+      // Get the session first
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error("No access token available");
+      }
+
       const response = await fetch(
         "https://mtbfvxjdgwdpsrgphkru.supabase.co/functions/v1/create-checkout-session",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${supabase.auth.getSession().then(({ data: { session } }) => session?.access_token)}`,
+            Authorization: `Bearer ${session.access_token}`,
           },
           body: JSON.stringify({
             planId,
@@ -52,6 +58,11 @@ export const Pricing = () => {
           }),
         }
       );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create checkout session');
+      }
 
       const { url } = await response.json();
       if (!url) {
@@ -63,7 +74,7 @@ export const Pricing = () => {
       console.error("Checkout error:", error);
       toast({
         title: "Error",
-        description: "Failed to initiate checkout. Please try again.",
+        description: error.message || "Failed to initiate checkout. Please try again.",
         variant: "destructive",
       });
     } finally {
