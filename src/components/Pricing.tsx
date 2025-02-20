@@ -37,21 +37,30 @@ export const Pricing = () => {
 
     setLoadingPlan(planId);
     try {
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          planId,
-          successUrl: `${window.location.origin}/dashboard?success=true`,
-          cancelUrl: `${window.location.origin}/pricing?canceled=true`,
-        }),
-      });
+      const response = await fetch(
+        "https://mtbfvxjdgwdpsrgphkru.supabase.co/functions/v1/create-checkout-session",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${supabase.auth.getSession().then(({ data: { session } }) => session?.access_token)}`,
+          },
+          body: JSON.stringify({
+            planId,
+            successUrl: `${window.location.origin}/dashboard?success=true`,
+            cancelUrl: `${window.location.origin}/pricing?canceled=true`,
+          }),
+        }
+      );
 
       const { url } = await response.json();
+      if (!url) {
+        throw new Error("No checkout URL received");
+      }
+      
       window.location.href = url;
     } catch (error: any) {
+      console.error("Checkout error:", error);
       toast({
         title: "Error",
         description: "Failed to initiate checkout. Please try again.",
