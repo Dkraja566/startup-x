@@ -6,15 +6,15 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const PLANS = {
   starter: {
-    price: 'price_1234', // Replace with your actual Stripe price ID for starter plan
+    price: 'price_YOUR_STARTER_PRICE_ID', // Replace with your Stripe price ID for starter
     name: 'Starter'
   },
   professional: {
-    price: 'price_5678', // Replace with your actual Stripe price ID for professional plan
+    price: 'price_YOUR_PROFESSIONAL_PRICE_ID', // Replace with your Stripe price ID for professional
     name: 'Professional'
   },
   enterprise: {
-    price: 'price_9012', // Replace with your actual Stripe price ID for enterprise plan
+    price: 'price_YOUR_ENTERPRISE_PRICE_ID', // Replace with your Stripe price ID for enterprise
     name: 'Enterprise'
   }
 }
