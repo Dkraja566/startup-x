@@ -1,12 +1,11 @@
 
-import { Share2, Facebook, Twitter, Linkedin } from "lucide-react";
+import { Facebook, Twitter, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
 export const Footer = () => {
-  const [isShareOpen, setIsShareOpen] = useState(false);
   const { toast } = useToast();
 
   const handleShare = (platform: string) => {
@@ -122,62 +121,48 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* Social Share Section */}
+        {/* Social Media Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="mt-12 flex justify-center items-center"
+          className="mt-12 flex justify-center items-center gap-4"
         >
-          <div className="inline-flex items-center gap-4 p-4 bg-background rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.2 }}
+            className="flex gap-4"
+          >
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full hover:bg-primary/10 transition-colors"
-              onClick={() => setIsShareOpen(!isShareOpen)}
+              className="rounded-full hover:bg-blue-500/10 text-blue-500 transition-colors hover:scale-110"
+              onClick={() => handleShare("facebook")}
             >
-              <Share2 className="h-5 w-5" />
-              <span className="sr-only">Toggle share menu</span>
+              <Facebook className="h-5 w-5" />
+              <span className="sr-only">Share on Facebook</span>
             </Button>
-            
-            {isShareOpen && (
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.2 }}
-                className="flex gap-2"
-              >
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full hover:bg-blue-500/10 text-blue-500 transition-colors"
-                  onClick={() => handleShare("facebook")}
-                >
-                  <Facebook className="h-5 w-5" />
-                  <span className="sr-only">Share on Facebook</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full hover:bg-sky-500/10 text-sky-500 transition-colors"
-                  onClick={() => handleShare("twitter")}
-                >
-                  <Twitter className="h-5 w-5" />
-                  <span className="sr-only">Share on Twitter</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full hover:bg-blue-600/10 text-blue-600 transition-colors"
-                  onClick={() => handleShare("linkedin")}
-                >
-                  <Linkedin className="h-5 w-5" />
-                  <span className="sr-only">Share on LinkedIn</span>
-                </Button>
-              </motion.div>
-            )}
-          </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-sky-500/10 text-sky-500 transition-colors hover:scale-110"
+              onClick={() => handleShare("twitter")}
+            >
+              <Twitter className="h-5 w-5" />
+              <span className="sr-only">Share on Twitter</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-blue-600/10 text-blue-600 transition-colors hover:scale-110"
+              onClick={() => handleShare("linkedin")}
+            >
+              <Linkedin className="h-5 w-5" />
+              <span className="sr-only">Share on LinkedIn</span>
+            </Button>
+          </motion.div>
         </motion.div>
 
         <div className="mt-12 text-center text-muted-foreground">
