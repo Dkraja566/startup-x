@@ -36,7 +36,7 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="py-12 border-t">
+    <footer className="py-12 border-t relative">
       <div className="container px-4 md:px-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
@@ -123,40 +123,51 @@ export const Footer = () => {
 
         {/* Social Media Buttons */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: 50 }}
+          whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="mt-12 flex justify-center items-center gap-4"
+          className="absolute top-12 right-4 md:right-12 flex flex-col gap-4"
         >
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.2 }}
-            className="flex gap-4"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="group"
           >
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full hover:bg-blue-500/10 text-blue-500 transition-colors hover:scale-110"
+              className="rounded-full bg-blue-500/10 text-blue-500 transition-all duration-300 hover:bg-blue-500 hover:text-white hover:shadow-lg hover:shadow-blue-500/25"
               onClick={() => handleShare("facebook")}
             >
               <Facebook className="h-5 w-5" />
               <span className="sr-only">Share on Facebook</span>
             </Button>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="group"
+          >
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full hover:bg-sky-500/10 text-sky-500 transition-colors hover:scale-110"
+              className="rounded-full bg-sky-500/10 text-sky-500 transition-all duration-300 hover:bg-sky-500 hover:text-white hover:shadow-lg hover:shadow-sky-500/25"
               onClick={() => handleShare("twitter")}
             >
               <Twitter className="h-5 w-5" />
               <span className="sr-only">Share on Twitter</span>
             </Button>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="group"
+          >
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full hover:bg-blue-600/10 text-blue-600 transition-colors hover:scale-110"
+              className="rounded-full bg-blue-600/10 text-blue-600 transition-all duration-300 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-600/25"
               onClick={() => handleShare("linkedin")}
             >
               <Linkedin className="h-5 w-5" />
