@@ -1,5 +1,4 @@
-
-import { Check, Sparkles, Loader2, Share2, Facebook, Twitter, Linkedin } from "lucide-react";
+import { Check, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -184,59 +183,6 @@ export const Pricing = () => {
             </motion.div>
           ))}
         </div>
-
-        {/* Social Share Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-          className="mt-12 text-center"
-        >
-          <div className="inline-flex items-center gap-4 p-4 bg-background rounded-full shadow-lg">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full hover:bg-primary/10 transition-colors"
-              onClick={() => setIsShareOpen(!isShareOpen)}
-            >
-              <Share2 className="h-5 w-5" />
-            </Button>
-            
-            {isShareOpen && (
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="flex gap-2"
-              >
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full hover:bg-blue-500/10 text-blue-500 transition-colors"
-                  onClick={() => handleShare("facebook")}
-                >
-                  <Facebook className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full hover:bg-sky-500/10 text-sky-500 transition-colors"
-                  onClick={() => handleShare("twitter")}
-                >
-                  <Twitter className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full hover:bg-blue-600/10 text-blue-600 transition-colors"
-                  onClick={() => handleShare("linkedin")}
-                >
-                  <Linkedin className="h-5 w-5" />
-                </Button>
-              </motion.div>
-            )}
-          </div>
-        </motion.div>
 
         <div className="mt-12 text-center">
           <p className="text-muted-foreground">
