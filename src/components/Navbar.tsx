@@ -1,17 +1,37 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, Menu, X, LogIn, LogOut } from "lucide-react";
+import { 
+  Sun, 
+  Moon, 
+  Menu, 
+  X, 
+  LogIn, 
+  LogOut,
+  UserCircle,
+  Settings,
+  User,
+  CreditCard
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, signOut } = useAuth();
 
   const toggleTheme = () => {
     setIsDark(!isDark);
@@ -23,8 +43,8 @@ export const Navbar = () => {
   };
 
   const handleLogin = () => {
-    if (isLoggedIn) {
-      setIsLoggedIn(false);
+    if (user) {
+      signOut();
       toast({
         title: 'Successfully logged out',
         duration: 2000,
@@ -88,27 +108,53 @@ export const Navbar = () => {
                 <Moon className="h-5 w-5 text-slate-900" />
               )}
             </Button>
-            <Button
-              variant="outline"
-              className="rounded-full"
-              onClick={handleLogin}
-            >
-              {isLoggedIn ? (
-                <>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </>
-              ) : (
-                <>
+
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="relative rounded-full h-10 w-10 p-0 hover:bg-accent/50"
+                  >
+                    <UserCircle className="h-6 w-6" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="cursor-pointer" onClick={() => navigate('/dashboard')}>
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Billing
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="cursor-pointer text-red-500" onClick={handleLogin}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  className="rounded-full"
+                  onClick={handleLogin}
+                >
                   <LogIn className="mr-2 h-4 w-4" />
                   Login
-                </>
-              )}
-            </Button>
-            {!isLoggedIn && (
-              <Button className="rounded-full" onClick={handleSignUp}>
-                Sign Up
-              </Button>
+                </Button>
+                <Button className="rounded-full" onClick={handleSignUp}>
+                  Sign Up
+                </Button>
+              </>
             )}
           </div>
 
@@ -161,27 +207,29 @@ export const Navbar = () => {
                     <Moon className="h-5 w-5 text-slate-900" />
                   )}
                 </Button>
-                <Button
-                  variant="outline"
-                  className="rounded-full flex-1"
-                  onClick={handleLogin}
-                >
-                  {isLoggedIn ? (
-                    <>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Logout
-                    </>
-                  ) : (
-                    <>
+                {user ? (
+                  <Button
+                    variant="outline"
+                    className="rounded-full flex-1"
+                    onClick={handleLogin}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      className="rounded-full flex-1"
+                      onClick={handleLogin}
+                    >
                       <LogIn className="mr-2 h-4 w-4" />
                       Login
-                    </>
-                  )}
-                </Button>
-                {!isLoggedIn && (
-                  <Button className="rounded-full flex-1" onClick={handleSignUp}>
-                    Sign Up
-                  </Button>
+                    </Button>
+                    <Button className="rounded-full flex-1" onClick={handleSignUp}>
+                      Sign Up
+                    </Button>
+                  </>
                 )}
               </div>
             </div>
