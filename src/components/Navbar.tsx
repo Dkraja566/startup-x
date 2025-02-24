@@ -59,6 +59,14 @@ export const Navbar = () => {
     navigate('/signup');
   };
 
+  const handleNavigation = (path: string, label: string) => {
+    navigate(path);
+    toast({
+      title: `Navigating to ${label}`,
+      duration: 1500,
+    });
+  };
+
   const menuItems = [
     { label: "Features", path: "/features" },
     { label: "Testimonials", path: "/testimonials" },
@@ -114,7 +122,7 @@ export const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="relative rounded-full h-10 w-10 p-0 hover:bg-accent/50"
+                    className="relative rounded-full h-10 w-10 p-0 hover:bg-accent/50 active:scale-95 transition-transform"
                   >
                     <UserCircle className="h-6 w-6" />
                   </Button>
@@ -122,20 +130,32 @@ export const Navbar = () => {
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => navigate('/dashboard')}>
+                  <DropdownMenuItem 
+                    className="cursor-pointer hover:bg-accent/50 focus:bg-accent/50" 
+                    onClick={() => handleNavigation('/dashboard', 'Profile')}
+                  >
                     <User className="mr-2 h-4 w-4" />
                     Profile
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
+                  <DropdownMenuItem 
+                    className="cursor-pointer hover:bg-accent/50 focus:bg-accent/50" 
+                    onClick={() => handleNavigation('/dashboard/billing', 'Billing')}
+                  >
                     <CreditCard className="mr-2 h-4 w-4" />
                     Billing
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
+                  <DropdownMenuItem 
+                    className="cursor-pointer hover:bg-accent/50 focus:bg-accent/50" 
+                    onClick={() => handleNavigation('/dashboard/settings', 'Settings')}
+                  >
                     <Settings className="mr-2 h-4 w-4" />
                     Settings
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer text-red-500" onClick={handleLogin}>
+                  <DropdownMenuItem 
+                    className="cursor-pointer text-red-500 hover:bg-red-50 dark:hover:bg-red-950/50 focus:bg-red-50 dark:focus:bg-red-950/50" 
+                    onClick={handleLogin}
+                  >
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
                   </DropdownMenuItem>
@@ -194,6 +214,42 @@ export const Navbar = () => {
                   {item.label}
                 </button>
               ))}
+              {user && (
+                <>
+                  <div className="pt-4 border-t">
+                    <button
+                      onClick={() => {
+                        handleNavigation('/dashboard', 'Profile');
+                        setIsMenuOpen(false);
+                      }}
+                      className="flex items-center w-full p-2 rounded-md hover:bg-accent/50"
+                    >
+                      <User className="h-4 w-4 mr-2" />
+                      Profile
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleNavigation('/dashboard/billing', 'Billing');
+                        setIsMenuOpen(false);
+                      }}
+                      className="flex items-center w-full p-2 rounded-md hover:bg-accent/50"
+                    >
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      Billing
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleNavigation('/dashboard/settings', 'Settings');
+                        setIsMenuOpen(false);
+                      }}
+                      className="flex items-center w-full p-2 rounded-md hover:bg-accent/50"
+                    >
+                      <Settings className="h-4 w-4 mr-2" />
+                      Settings
+                    </button>
+                  </div>
+                </>
+              )}
               <div className="flex items-center space-x-4 pt-4 border-t">
                 <Button
                   variant="ghost"
