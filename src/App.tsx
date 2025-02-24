@@ -15,6 +15,8 @@ import Testimonials from "./pages/Testimonials";
 import Pricing from "./pages/Pricing";
 import Demo from "./pages/Demo";
 import Dashboard from "./pages/Dashboard";
+import Billing from "./pages/dashboard/Billing";
+import Settings from "./pages/dashboard/Settings";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +40,22 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/billing"
+              element={
+                <ProtectedRoute>
+                  <Billing />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
                 </ProtectedRoute>
               }
             />
