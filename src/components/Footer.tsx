@@ -177,7 +177,7 @@ export const Footer = () => {
         </motion.div>
 
         <div className="mt-12 text-center text-muted-foreground">
-          <p>&copy; 2024 Your Company. All rights reserved.</p>
+          <p>&copy; 2025 Singh Construction. All rights reserved.</p>
         </div>
       </div>
     </footer>
