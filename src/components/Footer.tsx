@@ -2,11 +2,12 @@
 import { Facebook, Twitter, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export const Footer = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleShare = (platform: string) => {
     const url = window.location.href;
@@ -35,93 +36,102 @@ export const Footer = () => {
     }
   };
 
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    toast({
+      title: "Navigating",
+      description: `Taking you to ${path}...`,
+      duration: 2000,
+    });
+  };
+
   return (
-    <footer className="py-12 border-t relative">
+    <footer className="py-12 border-t relative bg-gradient-to-b from-background to-background/50">
       <div className="container px-4 md:px-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
-            <h4 className="font-semibold mb-4">Product</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+            <h4 className="font-semibold mb-4 text-lg">Product</h4>
+            <ul className="space-y-3">
+              <motion.li whileHover={{ x: 5 }} className="transform origin-left">
+                <a onClick={() => handleNavigation('/features')} className="text-muted-foreground hover:text-primary cursor-pointer transition-all duration-300 flex items-center gap-2">
                   Features
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
                 </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              </motion.li>
+              <motion.li whileHover={{ x: 5 }} className="transform origin-left">
+                <a onClick={() => handleNavigation('/pricing')} className="text-muted-foreground hover:text-primary cursor-pointer transition-all duration-300 flex items-center gap-2">
                   Pricing
                 </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              </motion.li>
+              <motion.li whileHover={{ x: 5 }} className="transform origin-left">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-all duration-300 flex items-center gap-2">
                   Documentation
                 </a>
-              </li>
+              </motion.li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">Company</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+            <h4 className="font-semibold mb-4 text-lg">Company</h4>
+            <ul className="space-y-3">
+              <motion.li whileHover={{ x: 5 }} className="transform origin-left">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-all duration-300 flex items-center gap-2">
                   About
                 </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              </motion.li>
+              <motion.li whileHover={{ x: 5 }} className="transform origin-left">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-all duration-300 flex items-center gap-2">
                   Blog
                 </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              </motion.li>
+              <motion.li whileHover={{ x: 5 }} className="transform origin-left">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-all duration-300 flex items-center gap-2">
                   Careers
                 </a>
-              </li>
+              </motion.li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">Resources</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+            <h4 className="font-semibold mb-4 text-lg">Resources</h4>
+            <ul className="space-y-3">
+              <motion.li whileHover={{ x: 5 }} className="transform origin-left">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-all duration-300 flex items-center gap-2">
                   Community
                 </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              </motion.li>
+              <motion.li whileHover={{ x: 5 }} className="transform origin-left">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-all duration-300 flex items-center gap-2">
                   Help Center
                 </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              </motion.li>
+              <motion.li whileHover={{ x: 5 }} className="transform origin-left">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-all duration-300 flex items-center gap-2">
                   Partners
                 </a>
-              </li>
+              </motion.li>
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold mb-4">Legal</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+            <h4 className="font-semibold mb-4 text-lg">Legal</h4>
+            <ul className="space-y-3">
+              <motion.li whileHover={{ x: 5 }} className="transform origin-left">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-all duration-300 flex items-center gap-2">
                   Privacy
                 </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              </motion.li>
+              <motion.li whileHover={{ x: 5 }} className="transform origin-left">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-all duration-300 flex items-center gap-2">
                   Terms
                 </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              </motion.li>
+              <motion.li whileHover={{ x: 5 }} className="transform origin-left">
+                <a href="#" className="text-muted-foreground hover:text-primary transition-all duration-300 flex items-center gap-2">
                   License
                 </a>
-              </li>
+              </motion.li>
             </ul>
           </div>
         </div>
 
-        {/* Social Media Buttons */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -176,8 +186,14 @@ export const Footer = () => {
           </motion.div>
         </motion.div>
 
-        <div className="mt-12 text-center text-muted-foreground">
-          <p>&copy; 2025 Singh Construction. All rights reserved.</p>
+        <div className="mt-12 text-center">
+          <motion.p 
+            className="text-muted-foreground"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 400 }}
+          >
+            &copy; 2025 StartupX. All rights reserved.
+          </motion.p>
         </div>
       </div>
     </footer>

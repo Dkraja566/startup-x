@@ -1,7 +1,20 @@
 
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
+import { useEffect } from "react";
+import { useInView } from "framer-motion";
+import { useRef } from "react";
 
 export const Testimonials = () => {
+  const controls = useAnimation();
+  const ref = useRef(null);
+  const isInView = useInView(ref);
+
+  useEffect(() => {
+    if (isInView) {
+      controls.start("visible");
+    }
+  }, [controls, isInView]);
+
   const testimonials = [
     {
       quote: "This platform has completely transformed how we handle our data analytics. The insights we've gained have been invaluable.",
@@ -27,17 +40,23 @@ export const Testimonials = () => {
   ];
 
   return (
-    <section className="py-24 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
+    <section className="py-24 relative overflow-hidden" ref={ref}>
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/5" />
       <div className="container px-4 md:px-6 relative">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
+          initial="hidden"
+          animate={controls}
+          variants={{
+            hidden: { opacity: 0, y: 20 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.6, ease: "easeOut" }
+            }
+          }}
           className="text-center"
         >
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-4 hover:text-primary transition-colors duration-300">
+          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60 hover:to-primary transition-all duration-300">
             Trusted by industry leaders
           </h2>
           <p className="text-lg text-muted-foreground mb-16 max-w-[600px] mx-auto hover:text-foreground transition-colors duration-300">
@@ -48,11 +67,18 @@ export const Testimonials = () => {
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="p-8 bg-background/50 backdrop-blur-sm rounded-2xl relative group hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 transition-all duration-500"
+              initial="hidden"
+              animate={controls}
+              variants={{
+                hidden: { opacity: 0, y: 50 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 0.6, delay: index * 0.2 }
+                }
+              }}
+              whileHover={{ scale: 1.02, y: -5 }}
+              className="p-8 bg-background/50 backdrop-blur-sm rounded-2xl relative group cursor-pointer border border-transparent hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500"
             >
               <motion.div 
                 className="mb-6 relative"
@@ -62,7 +88,7 @@ export const Testimonials = () => {
                 <img
                   src={testimonial.image}
                   alt={testimonial.author}
-                  className="w-20 h-20 rounded-full border-2 border-primary/20 object-cover shadow-lg group-hover:border-primary/50 transition-all duration-300"
+                  className="w-24 h-24 rounded-full border-2 border-primary/20 object-cover shadow-lg group-hover:border-primary/50 transition-all duration-300"
                 />
                 <div className="absolute inset-0 bg-primary/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </motion.div>
@@ -70,7 +96,7 @@ export const Testimonials = () => {
                 {[...Array(testimonial.rating)].map((_, i) => (
                   <motion.svg
                     key={i}
-                    className="w-5 h-5 text-yellow-500 fill-current"
+                    className="w-6 h-6 text-yellow-500 fill-current"
                     viewBox="0 0 20 20"
                     initial={{ rotate: 0 }}
                     whileHover={{ rotate: 360, scale: 1.2 }}
@@ -84,7 +110,7 @@ export const Testimonials = () => {
                 "{testimonial.quote}"
               </p>
               <div>
-                <p className="font-semibold text-lg group-hover:text-primary transition-colors duration-300">
+                <p className="font-semibold text-xl group-hover:text-primary transition-colors duration-300">
                   {testimonial.author}
                 </p>
                 <p className="text-sm text-muted-foreground group-hover:text-primary/70 transition-colors duration-300">
@@ -97,7 +123,7 @@ export const Testimonials = () => {
                 transition={{ type: "spring", stiffness: 300 }}
               >
                 <svg
-                  className="h-8 w-8 text-primary/20 group-hover:text-primary/40 transition-colors duration-300"
+                  className="h-10 w-10 text-primary/20 group-hover:text-primary/40 transition-colors duration-300"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
