@@ -192,7 +192,7 @@ export const Footer = () => {
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 400 }}
           >
-            &copy; 2025 StartupX. All rights reserved.
+            &copy; 2025 Singh Construction. All rights reserved.
           </motion.p>
         </div>
       </div>
