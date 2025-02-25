@@ -36,9 +36,9 @@ export const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-block px-4 py-1.5 font-medium bg-primary/10 text-primary rounded-full"
+            className="inline-block px-4 py-1.5 font-medium bg-primary/10 text-primary rounded-full hover:bg-primary/20 hover:scale-105 transition-all duration-300"
           >
-           Welcome in my company
+            Welcome in my company
           </motion.span>
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
@@ -47,13 +47,15 @@ export const Hero = () => {
             className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tighter"
           >
             Transform Your Business with
-            <span className="text-primary block mt-2"> AI-Powered Insights</span>
+            <span className="text-primary block mt-2 hover:scale-105 transition-transform duration-300"> 
+              AI-Powered Insights
+            </span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="max-w-[600px] text-muted-foreground md:text-xl"
+            className="max-w-[600px] text-muted-foreground md:text-xl hover:text-foreground transition-colors duration-300"
           >
             Harness the power of artificial intelligence to streamline your workflow and make data-driven decisions.
           </motion.p>
@@ -65,7 +67,7 @@ export const Hero = () => {
           >
             <Button 
               size="lg" 
-              className="rounded-full group"
+              className="rounded-full group hover:scale-105 transition-all duration-300"
               onClick={handleGetStarted}
             >
               Get Started Free
@@ -74,10 +76,10 @@ export const Hero = () => {
             <Button 
               variant="outline" 
               size="lg" 
-              className="rounded-full group"
+              className="rounded-full group hover:scale-105 transition-all duration-300"
               onClick={handleWatchDemo}
             >
-              <Play className="mr-2 h-4 w-4" />
+              <Play className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform" />
               Watch Demo
             </Button>
           </motion.div>
@@ -85,16 +87,31 @@ export const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.8 }}
-            className="flex items-center gap-4 text-sm text-muted-foreground mt-8"
+            className="flex items-center gap-4 text-sm text-muted-foreground mt-8 group"
           >
-            <div className="flex -space-x-2">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-8 h-8 rounded-full border-2 border-background bg-muted overflow-hidden">
-                  <div className="w-full h-full bg-primary/10" />
-                </div>
-              ))}
+            <div className="flex -space-x-4">
+              <img 
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&h=128&fit=crop"
+                alt="Customer" 
+                className="w-10 h-10 rounded-full border-2 border-background hover:scale-110 transition-transform duration-300"
+              />
+              <img 
+                src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=128&h=128&fit=crop"
+                alt="Customer" 
+                className="w-10 h-10 rounded-full border-2 border-background hover:scale-110 transition-transform duration-300"
+              />
+              <img 
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=128&h=128&fit=crop"
+                alt="Customer" 
+                className="w-10 h-10 rounded-full border-2 border-background hover:scale-110 transition-transform duration-300"
+              />
+              <img 
+                src="https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?w=128&h=128&fit=crop"
+                alt="Customer" 
+                className="w-10 h-10 rounded-full border-2 border-background hover:scale-110 transition-transform duration-300"
+              />
             </div>
-            <p>
+            <p className="group-hover:text-foreground transition-colors duration-300">
               <span className="font-semibold text-foreground">2,000+</span> happy customers
             </p>
           </motion.div>
