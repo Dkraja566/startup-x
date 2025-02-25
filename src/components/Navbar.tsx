@@ -80,13 +80,13 @@ export const Navbar = () => {
           {/* Logo */}
           <a 
             href="/" 
-            className="text-xl font-bold text-primary cursor-pointer"
+            className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600 hover:from-purple-600 hover:to-primary transition-all duration-300 cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
               navigate('/');
             }}
           >
-            YourSaaS
+            StartupX
           </a>
 
           {/* Desktop Menu */}
@@ -95,7 +95,7 @@ export const Navbar = () => {
               <button
                 key={item.label}
                 onClick={() => navigate(item.path)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-primary after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300"
               >
                 {item.label}
               </button>
@@ -108,12 +108,12 @@ export const Navbar = () => {
               variant="ghost"
               size="icon"
               onClick={toggleTheme}
-              className="rounded-full"
+              className="rounded-full hover:scale-110 transition-transform duration-300"
             >
               {isDark ? (
-                <Sun className="h-5 w-5 text-yellow-500" />
+                <Sun className="h-5 w-5 text-yellow-500 hover:rotate-180 transition-transform duration-500" />
               ) : (
-                <Moon className="h-5 w-5 text-slate-900" />
+                <Moon className="h-5 w-5 text-slate-900 hover:rotate-180 transition-transform duration-500" />
               )}
             </Button>
 
@@ -122,42 +122,43 @@ export const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="relative rounded-full h-10 w-10 p-0 hover:bg-accent/50 active:scale-95 transition-transform"
+                    className="relative rounded-full h-10 w-10 p-0 hover:bg-primary/10 hover:scale-110 active:scale-95 transition-all duration-300"
                   >
-                    <UserCircle className="h-6 w-6" />
+                    <UserCircle className="h-6 w-6 hover:text-primary transition-colors duration-300" />
+                    <span className="absolute top-0 right-0 h-2 w-2 bg-primary rounded-full" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent align="end" className="w-56 animate-in slide-in-from-top-1 duration-300">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
-                    className="cursor-pointer hover:bg-accent/50 focus:bg-accent/50" 
+                    className="cursor-pointer group" 
                     onClick={() => handleNavigation('/dashboard', 'Profile')}
                   >
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
+                    <User className="mr-2 h-4 w-4 group-hover:text-primary transition-colors" />
+                    <span className="group-hover:translate-x-1 transition-transform">Profile</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    className="cursor-pointer hover:bg-accent/50 focus:bg-accent/50" 
+                    className="cursor-pointer group" 
                     onClick={() => handleNavigation('/dashboard/billing', 'Billing')}
                   >
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    Billing
+                    <CreditCard className="mr-2 h-4 w-4 group-hover:text-primary transition-colors" />
+                    <span className="group-hover:translate-x-1 transition-transform">Billing</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    className="cursor-pointer hover:bg-accent/50 focus:bg-accent/50" 
+                    className="cursor-pointer group" 
                     onClick={() => handleNavigation('/dashboard/settings', 'Settings')}
                   >
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
+                    <Settings className="mr-2 h-4 w-4 group-hover:text-primary transition-colors" />
+                    <span className="group-hover:translate-x-1 transition-transform">Settings</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
-                    className="cursor-pointer text-red-500 hover:bg-red-50 dark:hover:bg-red-950/50 focus:bg-red-50 dark:focus:bg-red-950/50" 
+                    className="cursor-pointer text-red-500 group hover:bg-red-50 dark:hover:bg-red-950/50" 
                     onClick={handleLogin}
                   >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Logout
+                    <LogOut className="mr-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    <span className="group-hover:translate-x-1 transition-transform">Logout</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -165,13 +166,16 @@ export const Navbar = () => {
               <>
                 <Button
                   variant="outline"
-                  className="rounded-full"
+                  className="rounded-full hover:scale-105 transition-transform duration-300"
                   onClick={handleLogin}
                 >
                   <LogIn className="mr-2 h-4 w-4" />
                   Login
                 </Button>
-                <Button className="rounded-full" onClick={handleSignUp}>
+                <Button 
+                  className="rounded-full hover:scale-105 hover:bg-primary/90 transition-all duration-300" 
+                  onClick={handleSignUp}
+                >
                   Sign Up
                 </Button>
               </>

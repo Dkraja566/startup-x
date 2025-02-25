@@ -52,34 +52,35 @@ export const Testimonials = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="p-6 bg-background backdrop-blur-sm rounded-2xl relative group hover:shadow-lg transition-all duration-300"
+              className="p-6 bg-background/50 backdrop-blur-sm rounded-2xl relative group hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1 transition-all duration-300"
             >
-              <div className="mb-4">
+              <div className="mb-4 relative">
                 <img
                   src={testimonial.image}
                   alt={testimonial.author}
-                  className="w-16 h-16 rounded-full border-2 border-primary/20 object-cover"
+                  className="w-16 h-16 rounded-full border-2 border-primary/20 object-cover group-hover:border-primary/50 group-hover:scale-110 transition-all duration-300"
                 />
+                <div className="absolute inset-0 bg-primary/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
               <div className="flex gap-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
                   <svg
                     key={i}
-                    className="w-5 h-5 text-yellow-500 fill-current"
+                    className="w-5 h-5 text-yellow-500 fill-current group-hover:scale-110 transition-transform duration-300"
                     viewBox="0 0 20 20"
                   >
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
                 ))}
               </div>
-              <p className="text-lg mb-4 italic">{testimonial.quote}</p>
+              <p className="text-lg mb-4 italic group-hover:text-primary/90 transition-colors duration-300">{testimonial.quote}</p>
               <div>
-                <p className="font-semibold">{testimonial.author}</p>
+                <p className="font-semibold group-hover:text-primary transition-colors duration-300">{testimonial.author}</p>
                 <p className="text-sm text-muted-foreground">{testimonial.role}</p>
               </div>
               <div className="absolute top-0 right-0 p-6">
                 <svg
-                  className="h-8 w-8 text-primary/20"
+                  className="h-8 w-8 text-primary/20 group-hover:text-primary/40 group-hover:scale-110 transition-all duration-300"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
