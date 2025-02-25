@@ -5,16 +5,16 @@ export const Testimonials = () => {
   const testimonials = [
     {
       quote: "This platform has completely transformed how we handle our data analytics. The insights we've gained have been invaluable.",
-      author: "Sarah Johnson",
-      role: "CTO at TechCorp",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=256&h=256&q=80",
+      author: "Dhirendra Singh",
+      role: "Founder of StartupX",
+      image: "/lovable-uploads/163e097b-a22a-4eb5-8725-3d394dca8ffd.png",
       rating: 5,
     },
     {
       quote: "The insights we've gained have been invaluable for our business growth. Customer support is outstanding.",
-      author: "Michael Chen",
-      role: "Founder at StartupX",
-      image: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?w=256&h=256&q=80",
+      author: "Monu choudhary",
+      role: "CEO of StartupX",
+      image: "/lovable-uploads/e63c14cd-c979-4054-8675-b8d9e9ce8248.png",
       rating: 5,
     },
     {
@@ -58,7 +58,7 @@ export const Testimonials = () => {
                 <img
                   src={testimonial.image}
                   alt={testimonial.author}
-                  className="w-16 h-16 rounded-full border-2 border-primary/20"
+                  className="w-16 h-16 rounded-full border-2 border-primary/20 object-cover"
                 />
               </div>
               <div className="flex gap-1 mb-4">
