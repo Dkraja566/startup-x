@@ -1,4 +1,3 @@
-
 import { Check, Zap, Shield, BarChart, Cloud, Code2, Globe, Smartphone, Target, Bot, Gift, Laptop, Server, Users, Headphones, Rocket } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -146,7 +145,7 @@ export const Features = () => {
   };
 
   return (
-    <section className="py-24 bg-gradient-to-b from-muted/50 to-background">
+    <section className="py-24 bg-background">
       <div className="container px-4 md:px-6">
         <div className="text-center space-y-4">
           <motion.div
@@ -205,9 +204,9 @@ export const Features = () => {
                   transition={{ duration: 0.3 }}
                   viewport={{ once: true }}
                   onClick={() => handleFeatureClick(feature)}
-                  className="relative flex-shrink-0 w-[300px] group p-6 bg-background/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-transparent hover:border-primary/20"
+                  className="relative flex-shrink-0 w-[300px] group p-6 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-border hover:border-primary/20"
                 >
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-primary/5 via-primary/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <feature.icon 
                     className={`h-12 w-12 mb-4 ${feature.color} group-hover:scale-110 transition-transform duration-300`} 
                   />
@@ -223,7 +222,6 @@ export const Features = () => {
                   >
                     <span className="text-primary text-lg">→</span>
                   </motion.div>
-                  <div className="absolute inset-0 rounded-2xl ring-2 ring-primary/10 ring-offset-2 ring-offset-background opacity-0 group-hover:opacity-100 transition-all duration-300" />
                 </motion.div>
               ))}
             </div>
