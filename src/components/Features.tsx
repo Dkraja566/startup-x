@@ -3,6 +3,8 @@ import { Check, Zap, Shield, BarChart, Cloud, Code2, Globe, Smartphone, Target, 
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { useRef } from "react";
+import { Button } from "./ui/button";
 
 const features = [
   {
@@ -122,18 +124,29 @@ const features = [
 export const Features = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const handleFeatureClick = (feature: typeof features[0]) => {
     toast({
-      title: feature.title,
-      description: "Exploring feature details...",
+      title: `Exploring ${feature.title}`,
+      description: "Taking you to feature details...",
       duration: 2000,
     });
     navigate(feature.link);
   };
 
+  const scroll = (direction: "left" | "right") => {
+    if (scrollContainerRef.current) {
+      const scrollAmount = direction === "left" ? -400 : 400;
+      scrollContainerRef.current.scrollBy({
+        left: scrollAmount,
+        behavior: "smooth"
+      });
+    }
+  };
+
   return (
-    <section className="py-24 bg-muted/50">
+    <section className="py-24 bg-gradient-to-b from-muted/50 to-background">
       <div className="container px-4 md:px-6">
         <div className="text-center space-y-4">
           <motion.div
@@ -150,38 +163,74 @@ export const Features = () => {
             </p>
           </motion.div>
         </div>
+
         <div className="mt-16 relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background pointer-events-none z-10" />
-          <div className="overflow-auto pb-8 -mx-4 px-4 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent hover:scrollbar-thumb-primary/40 transition-colors duration-300">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-w-[640px]">
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 z-20">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => scroll("left")}
+              className="rounded-full shadow-lg bg-background/80 backdrop-blur-sm hover:bg-background"
+            >
+              ←
+            </Button>
+          </div>
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 z-20">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => scroll("right")}
+              className="rounded-full shadow-lg bg-background/80 backdrop-blur-sm hover:bg-background"
+            >
+              →
+            </Button>
+          </div>
+
+          <div 
+            ref={scrollContainerRef}
+            className="overflow-x-auto hide-scrollbar pb-8 -mx-4 px-4"
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              WebkitOverflowScrolling: 'touch'
+            }}
+          >
+            <div className="flex gap-6 min-w-max px-4">
               {features.map((feature, index) => (
-                <motion.button
+                <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  whileHover={{ y: -5, scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
                   viewport={{ once: true }}
                   onClick={() => handleFeatureClick(feature)}
-                  className="relative group p-6 bg-background rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-left cursor-pointer border border-transparent hover:border-primary/20"
+                  className="relative flex-shrink-0 w-[300px] group p-6 bg-background/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-transparent hover:border-primary/20"
                 >
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <feature.icon className={`h-10 w-10 mb-4 ${feature.color} group-hover:scale-110 transition-transform duration-300`} />
-                  <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-primary/5 via-primary/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <feature.icon 
+                    className={`h-12 w-12 mb-4 ${feature.color} group-hover:scale-110 transition-transform duration-300`} 
+                  />
+                  <h3 className="font-semibold text-xl mb-3 group-hover:text-primary transition-colors">
                     {feature.title}
                   </h3>
                   <p className="text-muted-foreground group-hover:text-foreground transition-colors">
                     {feature.description}
                   </p>
                   <motion.div
-                    className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300"
                     whileHover={{ scale: 1.2, x: -2 }}
                   >
-                    <span className="text-primary">→</span>
+                    <span className="text-primary text-lg">→</span>
                   </motion.div>
-                </motion.button>
+                  <div className="absolute inset-0 rounded-2xl ring-2 ring-primary/10 ring-offset-2 ring-offset-background opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                </motion.div>
               ))}
             </div>
           </div>
+
+          <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-background to-transparent pointer-events-none z-10" />
+          <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-background to-transparent pointer-events-none z-10" />
         </div>
       </div>
     </section>
