@@ -1,5 +1,5 @@
 
-import { Shield, Lock, UserCheck, Shield2 } from "lucide-react";
+import { Shield, Lock, UserCheck, ShieldCheck } from "lucide-react";
 import { FeatureLayout } from "./FeatureLayout";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
@@ -17,7 +17,7 @@ const Security = () => {
       description: "Multi-factor authentication and biometric security options"
     },
     {
-      icon: Shield2,
+      icon: ShieldCheck,
       title: "Compliance & Auditing",
       description: "Full compliance with industry standards and detailed audit logs"
     }
