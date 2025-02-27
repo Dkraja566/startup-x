@@ -14,6 +14,8 @@ import Analytics from "./pages/features/Analytics";
 import Cloud from "./pages/features/Cloud";
 import Api from "./pages/features/Api";
 import Mobile from "./pages/features/Mobile";
+import Global from "./pages/features/Global";
+import Integration from "./pages/features/Integration";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
@@ -45,6 +47,8 @@ const App = () => {
               <Route path="/features/cloud" element={<Cloud />} />
               <Route path="/features/api" element={<Api />} />
               <Route path="/features/mobile" element={<Mobile />} />
+              <Route path="/features/global" element={<Global />} />
+              <Route path="/features/integration" element={<Integration />} />
               <Route path="/testimonials" element={<Testimonials />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/demo" element={<Demo />} />
