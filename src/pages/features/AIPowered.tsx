@@ -1,5 +1,5 @@
 
-import { Brain, Chip, Bot, Code } from "lucide-react";
+import { Brain, CircuitBoard, Bot, Code } from "lucide-react";
 import { FeatureLayout } from "./FeatureLayout";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
@@ -27,7 +27,7 @@ const AIPoweredFeature = () => {
     <FeatureLayout
       title="AI-Powered"
       description="Leverage advanced machine learning for smarter decisions."
-      icon={<Chip className="w-8 h-8" />}
+      icon={<CircuitBoard className="w-8 h-8" />}
       color="bg-cyan-500"
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
