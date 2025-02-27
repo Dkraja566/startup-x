@@ -12,6 +12,8 @@ import Performance from "./pages/features/Performance";
 import Security from "./pages/features/Security";
 import Analytics from "./pages/features/Analytics";
 import Cloud from "./pages/features/Cloud";
+import Api from "./pages/features/Api";
+import Mobile from "./pages/features/Mobile";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
@@ -41,6 +43,8 @@ const App = () => {
               <Route path="/features/security" element={<Security />} />
               <Route path="/features/analytics" element={<Analytics />} />
               <Route path="/features/cloud" element={<Cloud />} />
+              <Route path="/features/api" element={<Api />} />
+              <Route path="/features/mobile" element={<Mobile />} />
               <Route path="/testimonials" element={<Testimonials />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/demo" element={<Demo />} />
