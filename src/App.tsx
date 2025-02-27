@@ -16,6 +16,10 @@ import Api from "./pages/features/Api";
 import Mobile from "./pages/features/Mobile";
 import Global from "./pages/features/Global";
 import Integration from "./pages/features/Integration";
+import AIPowered from "./pages/features/AIPowered";
+import Rewards from "./pages/features/Rewards";
+import CrossPlatform from "./pages/features/CrossPlatform";
+import Infrastructure from "./pages/features/Infrastructure";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
@@ -49,6 +53,10 @@ const App = () => {
               <Route path="/features/mobile" element={<Mobile />} />
               <Route path="/features/global" element={<Global />} />
               <Route path="/features/integration" element={<Integration />} />
+              <Route path="/features/ai" element={<AIPowered />} />
+              <Route path="/features/rewards" element={<Rewards />} />
+              <Route path="/features/cross-platform" element={<CrossPlatform />} />
+              <Route path="/features/infrastructure" element={<Infrastructure />} />
               <Route path="/testimonials" element={<Testimonials />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/demo" element={<Demo />} />
