@@ -1,4 +1,5 @@
-import { Check, Sparkles, Loader2 } from "lucide-react";
+
+import { Check, Sparkles, Loader2, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
@@ -134,6 +135,25 @@ export const Pricing = () => {
             Choose the perfect plan for your business needs. All plans include a 14-day free trial.
           </p>
         </motion.div>
+        
+        {/* Payment Methods Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          viewport={{ once: true }}
+          className="flex justify-center items-center gap-4 mt-8 flex-wrap"
+        >
+          <div className="text-sm font-medium text-muted-foreground">Secure payment methods:</div>
+          <div className="flex items-center gap-4 flex-wrap justify-center">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/visa.svg" className="h-8 w-auto opacity-70 hover:opacity-100 transition-opacity" alt="Visa" />
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/mastercard.svg" className="h-8 w-auto opacity-70 hover:opacity-100 transition-opacity" alt="Mastercard" />
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/paypal.svg" className="h-8 w-auto opacity-70 hover:opacity-100 transition-opacity" alt="PayPal" />
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/applepay.svg" className="h-8 w-auto opacity-70 hover:opacity-100 transition-opacity" alt="Apple Pay" />
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/googlepay.svg" className="h-8 w-auto opacity-70 hover:opacity-100 transition-opacity" alt="Google Pay" />
+          </div>
+        </motion.div>
+        
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-16">
           {plans?.map((tier, index) => (
             <motion.div
@@ -142,7 +162,7 @@ export const Pricing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className={`relative flex flex-col group rounded-2xl p-6 bg-background shadow-lg hover:shadow-xl transition-all duration-300 ${
+              className={`relative flex flex-col group rounded-2xl p-6 bg-background shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${
                 tier.id === "professional" ? "ring-2 ring-primary" : ""
               }`}
             >
@@ -168,21 +188,51 @@ export const Pricing = () => {
                 >
                   {loadingPlan === tier.id ? (
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  ) : null}
+                  ) : (
+                    <CreditCard className="h-4 w-4 mr-2" />
+                  )}
                   {tier.id === "enterprise" ? "Contact Sales" : "Get Started"}
                 </Button>
                 <ul className="space-y-2 pt-4 border-t">
                   {(tier.features as string[]).map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start gap-2">
-                      <Check className={`h-4 w-4 mt-1 ${tier.id === "professional" ? "text-primary" : ""}`} />
+                      <Check className={`h-4 w-4 mt-1 text-green-500`} />
                       <span className="text-sm">{feature}</span>
                     </li>
                   ))}
                 </ul>
               </div>
+              
+              {/* Secure Payment Badge */}
+              <div className="mt-6 pt-4 border-t border-muted flex items-center justify-center gap-2 text-xs text-muted-foreground">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500">
+                  <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                Secure payment
+              </div>
             </motion.div>
           ))}
         </div>
+
+        {/* Money-back guarantee section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          viewport={{ once: true }}
+          className="mt-12 p-6 bg-background rounded-lg border text-center max-w-2xl mx-auto"
+        >
+          <div className="flex justify-center mb-4">
+            <div className="bg-green-100 p-2 rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+            </div>
+          </div>
+          <h3 className="text-lg font-bold mb-2">30-Day Money-Back Guarantee</h3>
+          <p className="text-muted-foreground text-sm">Not satisfied with our product? Get a full refund within 30 days, no questions asked.</p>
+        </motion.div>
 
         <div className="mt-12 text-center">
           <p className="text-muted-foreground">

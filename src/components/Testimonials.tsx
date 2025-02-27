@@ -81,18 +81,20 @@ export const Testimonials = () => {
               className="p-8 bg-background/50 backdrop-blur-sm rounded-2xl relative group cursor-pointer border border-transparent hover:border-primary/20 hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500"
             >
               <motion.div 
-                className="mb-6 relative"
+                className="mb-6 relative flex justify-center"
                 whileHover={{ scale: 1.1 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <img
-                  src={testimonial.image}
-                  alt={testimonial.author}
-                  className="w-24 h-24 rounded-full border-2 border-primary/20 object-cover shadow-lg group-hover:border-primary/50 transition-all duration-300"
-                />
-                <div className="absolute inset-0 bg-primary/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-primary/20 shadow-lg group-hover:border-primary/50 transition-all duration-300">
+                  <img
+                    src={testimonial.image}
+                    alt={testimonial.author}
+                    className="w-full h-full object-cover object-center"
+                  />
+                </div>
+                <div className="absolute inset-0 rounded-full bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </motion.div>
-              <div className="flex gap-1 mb-4">
+              <div className="flex gap-1 mb-4 justify-center">
                 {[...Array(testimonial.rating)].map((_, i) => (
                   <motion.svg
                     key={i}
@@ -109,7 +111,7 @@ export const Testimonials = () => {
               <p className="text-lg mb-6 italic leading-relaxed group-hover:text-primary/90 transition-colors duration-300">
                 "{testimonial.quote}"
               </p>
-              <div>
+              <div className="text-center">
                 <p className="font-semibold text-xl group-hover:text-primary transition-colors duration-300">
                   {testimonial.author}
                 </p>
