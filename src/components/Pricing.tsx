@@ -16,12 +16,65 @@ export const Pricing = () => {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [isShareOpen, setIsShareOpen] = useState(false);
 
+  // Default plans data to use when Supabase fetch fails
+  const defaultPlans = [
+    {
+      id: "starter",
+      name: "Starter",
+      price: 19,
+      billing_period: "month",
+      features: [
+        "Basic feature access",
+        "2 team members",
+        "5GB storage",
+        "Community support",
+        "Monthly reports"
+      ]
+    },
+    {
+      id: "professional",
+      name: "Professional",
+      price: 49,
+      billing_period: "month",
+      features: [
+        "Full feature access",
+        "10 team members",
+        "50GB storage",
+        "Priority support",
+        "Weekly reports",
+        "Advanced analytics"
+      ]
+    },
+    {
+      id: "enterprise",
+      name: "Enterprise",
+      price: 99,
+      billing_period: "month",
+      features: [
+        "Unlimited feature access",
+        "Unlimited team members",
+        "500GB storage",
+        "24/7 dedicated support",
+        "Custom reporting",
+        "Advanced analytics",
+        "Custom integrations",
+        "Dedicated account manager"
+      ]
+    }
+  ];
+
   const { data: plans, isLoading } = useQuery({
     queryKey: ["plans"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("plans").select("*");
-      if (error) throw error;
-      return data;
+      try {
+        const { data, error } = await supabase.from("plans").select("*");
+        if (error) throw error;
+        return data;
+      } catch (error) {
+        console.error("Error fetching plans:", error);
+        // Return default plans if the query fails
+        return defaultPlans;
+      }
     },
   });
 
@@ -97,7 +150,19 @@ export const Pricing = () => {
         throw new Error("No checkout URL received");
       }
       
-      window.location.href = url;
+      // For demo purposes, show a success message and redirect to dashboard instead of actual payment
+      if (process.env.NODE_ENV === 'development') {
+        toast({
+          title: "Payment Simulation",
+          description: "In development mode, we're simulating a successful payment. Redirecting to dashboard...",
+          duration: 4000,
+        });
+        setTimeout(() => {
+          navigate("/dashboard?success=true");
+        }, 2000);
+      } else {
+        window.location.href = url;
+      }
     } catch (error: any) {
       console.error("Checkout error:", error);
       toast({
@@ -117,6 +182,8 @@ export const Pricing = () => {
       </div>
     );
   }
+
+  const displayPlans = plans || defaultPlans;
 
   return (
     <section className="py-12 md:py-24 bg-muted/50">
@@ -155,7 +222,7 @@ export const Pricing = () => {
         </motion.div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mt-16">
-          {plans?.map((tier, index) => (
+          {displayPlans.map((tier, index) => (
             <motion.div
               key={tier.id}
               initial={{ opacity: 0, y: 20 }}
