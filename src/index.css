@@ -133,4 +133,17 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  
+  /* Violet hover utilities */
+  .hover-violet {
+    @apply transition-colors duration-300;
+  }
+  
+  .hover-violet:hover {
+    @apply text-[#9b87f5];
+  }
+  
+  .after-violet {
+    @apply relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#9b87f5] after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300;
+  }
 }

@@ -77,10 +77,10 @@ export const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {/* Logo with updated gradient */}
           <a 
             href="/" 
-            className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600 hover:from-purple-600 hover:to-primary transition-all duration-300 cursor-pointer"
+            className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#7E69AB] to-[#9b87f5] hover:from-[#9b87f5] hover:to-[#7E69AB] transition-all duration-300 cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
               navigate('/');
@@ -89,13 +89,13 @@ export const Navbar = () => {
             StartupX
           </a>
 
-          {/* Desktop Menu */}
+          {/* Desktop Menu - updated with violet hover effects */}
           <div className="hidden md:flex items-center space-x-8">
             {menuItems.map((item) => (
               <button
                 key={item.label}
                 onClick={() => navigate(item.path)}
-                className="text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-primary after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300"
+                className="text-muted-foreground hover:text-[#9b87f5] transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#9b87f5] after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300"
               >
                 {item.label}
               </button>
@@ -108,12 +108,12 @@ export const Navbar = () => {
               variant="ghost"
               size="icon"
               onClick={toggleTheme}
-              className="rounded-full hover:scale-110 transition-transform duration-300"
+              className="rounded-full hover:scale-110 hover:bg-[#E5DEFF] hover:text-[#9b87f5] transition-all duration-300"
             >
               {isDark ? (
-                <Sun className="h-5 w-5 text-yellow-500 hover:rotate-180 transition-transform duration-500" />
+                <Sun className="h-5 w-5 text-yellow-500 hover:text-[#9b87f5] hover:rotate-180 transition-all duration-500" />
               ) : (
-                <Moon className="h-5 w-5 text-slate-900 hover:rotate-180 transition-transform duration-500" />
+                <Moon className="h-5 w-5 text-slate-900 hover:text-[#9b87f5] hover:rotate-180 transition-all duration-500" />
               )}
             </Button>
 
@@ -122,10 +122,10 @@ export const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="relative rounded-full h-10 w-10 p-0 hover:bg-primary/10 hover:scale-110 active:scale-95 transition-all duration-300"
+                    className="relative rounded-full h-10 w-10 p-0 hover:bg-[#E5DEFF] hover:text-[#9b87f5] hover:scale-110 active:scale-95 transition-all duration-300"
                   >
-                    <UserCircle className="h-6 w-6 hover:text-primary transition-colors duration-300" />
-                    <span className="absolute top-0 right-0 h-2 w-2 bg-primary rounded-full" />
+                    <UserCircle className="h-6 w-6 hover:text-[#9b87f5] transition-colors duration-300" />
+                    <span className="absolute top-0 right-0 h-2 w-2 bg-[#9b87f5] rounded-full" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 animate-in slide-in-from-top-1 duration-300">
@@ -135,22 +135,22 @@ export const Navbar = () => {
                     className="cursor-pointer group" 
                     onClick={() => handleNavigation('/dashboard', 'Profile')}
                   >
-                    <User className="mr-2 h-4 w-4 group-hover:text-primary transition-colors" />
-                    <span className="group-hover:translate-x-1 transition-transform">Profile</span>
+                    <User className="mr-2 h-4 w-4 group-hover:text-[#9b87f5] transition-colors" />
+                    <span className="group-hover:translate-x-1 group-hover:text-[#9b87f5] transition-all">Profile</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     className="cursor-pointer group" 
                     onClick={() => handleNavigation('/dashboard/billing', 'Billing')}
                   >
-                    <CreditCard className="mr-2 h-4 w-4 group-hover:text-primary transition-colors" />
-                    <span className="group-hover:translate-x-1 transition-transform">Billing</span>
+                    <CreditCard className="mr-2 h-4 w-4 group-hover:text-[#9b87f5] transition-colors" />
+                    <span className="group-hover:translate-x-1 group-hover:text-[#9b87f5] transition-all">Billing</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     className="cursor-pointer group" 
                     onClick={() => handleNavigation('/dashboard/settings', 'Settings')}
                   >
-                    <Settings className="mr-2 h-4 w-4 group-hover:text-primary transition-colors" />
-                    <span className="group-hover:translate-x-1 transition-transform">Settings</span>
+                    <Settings className="mr-2 h-4 w-4 group-hover:text-[#9b87f5] transition-colors" />
+                    <span className="group-hover:translate-x-1 group-hover:text-[#9b87f5] transition-all">Settings</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
@@ -166,14 +166,14 @@ export const Navbar = () => {
               <>
                 <Button
                   variant="outline"
-                  className="rounded-full hover:scale-105 transition-transform duration-300"
+                  className="rounded-full hover:scale-105 hover:border-[#9b87f5] hover:text-[#9b87f5] transition-all duration-300"
                   onClick={handleLogin}
                 >
                   <LogIn className="mr-2 h-4 w-4" />
                   Login
                 </Button>
                 <Button 
-                  className="rounded-full hover:scale-105 hover:bg-primary/90 transition-all duration-300" 
+                  className="rounded-full hover:scale-105 bg-gradient-to-r from-[#7E69AB] to-[#9b87f5] hover:from-[#9b87f5] hover:to-[#6E59A5] text-white transition-all duration-300" 
                   onClick={handleSignUp}
                 >
                   Sign Up
@@ -182,9 +182,9 @@ export const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button with violet hover */}
           <button
-            className="md:hidden p-2"
+            className="md:hidden p-2 rounded-full hover:bg-[#E5DEFF] hover:text-[#9b87f5] transition-colors duration-300"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? (
@@ -196,7 +196,7 @@ export const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu with violet accents */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -213,7 +213,7 @@ export const Navbar = () => {
                     navigate(item.path);
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left text-muted-foreground hover:text-foreground transition-colors"
+                  className="block w-full text-left text-muted-foreground hover:text-[#9b87f5] transition-colors duration-300"
                 >
                   {item.label}
                 </button>
@@ -226,7 +226,7 @@ export const Navbar = () => {
                         handleNavigation('/dashboard', 'Profile');
                         setIsMenuOpen(false);
                       }}
-                      className="flex items-center w-full p-2 rounded-md hover:bg-accent/50"
+                      className="flex items-center w-full p-2 rounded-md hover:bg-[#E5DEFF] hover:text-[#9b87f5] transition-colors duration-300"
                     >
                       <User className="h-4 w-4 mr-2" />
                       Profile
@@ -236,7 +236,7 @@ export const Navbar = () => {
                         handleNavigation('/dashboard/billing', 'Billing');
                         setIsMenuOpen(false);
                       }}
-                      className="flex items-center w-full p-2 rounded-md hover:bg-accent/50"
+                      className="flex items-center w-full p-2 rounded-md hover:bg-[#E5DEFF] hover:text-[#9b87f5] transition-colors duration-300"
                     >
                       <CreditCard className="h-4 w-4 mr-2" />
                       Billing
@@ -246,7 +246,7 @@ export const Navbar = () => {
                         handleNavigation('/dashboard/settings', 'Settings');
                         setIsMenuOpen(false);
                       }}
-                      className="flex items-center w-full p-2 rounded-md hover:bg-accent/50"
+                      className="flex items-center w-full p-2 rounded-md hover:bg-[#E5DEFF] hover:text-[#9b87f5] transition-colors duration-300"
                     >
                       <Settings className="h-4 w-4 mr-2" />
                       Settings
@@ -259,7 +259,7 @@ export const Navbar = () => {
                   variant="ghost"
                   size="icon"
                   onClick={toggleTheme}
-                  className="rounded-full"
+                  className="rounded-full hover:bg-[#E5DEFF] hover:text-[#9b87f5] transition-colors duration-300"
                 >
                   {isDark ? (
                     <Sun className="h-5 w-5 text-yellow-500" />
@@ -270,7 +270,7 @@ export const Navbar = () => {
                 {user ? (
                   <Button
                     variant="outline"
-                    className="rounded-full flex-1"
+                    className="rounded-full flex-1 hover:border-[#9b87f5] hover:text-[#9b87f5] transition-colors duration-300"
                     onClick={handleLogin}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
@@ -280,13 +280,16 @@ export const Navbar = () => {
                   <>
                     <Button
                       variant="outline"
-                      className="rounded-full flex-1"
+                      className="rounded-full flex-1 hover:border-[#9b87f5] hover:text-[#9b87f5] transition-colors duration-300"
                       onClick={handleLogin}
                     >
                       <LogIn className="mr-2 h-4 w-4" />
                       Login
                     </Button>
-                    <Button className="rounded-full flex-1" onClick={handleSignUp}>
+                    <Button 
+                      className="rounded-full flex-1 bg-gradient-to-r from-[#7E69AB] to-[#9b87f5] hover:from-[#9b87f5] hover:to-[#6E59A5] text-white transition-all duration-300" 
+                      onClick={handleSignUp}
+                    >
                       Sign Up
                     </Button>
                   </>
