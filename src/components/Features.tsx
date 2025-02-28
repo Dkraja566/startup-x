@@ -132,6 +132,10 @@ export const Features = () => {
   const [scrollLeft, setScrollLeft] = useState(0);
   const [isInitialized, setIsInitialized] = useState(false);
   const [touchEnabled, setTouchEnabled] = useState(false);
+  const [dragStartTime, setDragStartTime] = useState(0);
+  const [isDragMomentum, setIsDragMomentum] = useState(false);
+  const [lastDragPosition, setLastDragPosition] = useState(0);
+  const [dragVelocity, setDragVelocity] = useState(0);
 
   // Detect touch capability
   useEffect(() => {
@@ -211,32 +215,80 @@ export const Features = () => {
     fixOverflowOnLoad();
   }, []);
 
+  // Effect for applying momentum scrolling
+  useEffect(() => {
+    if (isDragMomentum && dragVelocity !== 0 && scrollContainerRef.current) {
+      let momentumScrollId: number;
+      const startTime = performance.now();
+      const initialVelocity = dragVelocity;
+      const initialScrollLeft = scrollContainerRef.current.scrollLeft;
+      
+      const applyMomentum = (timestamp: number) => {
+        const elapsed = timestamp - startTime;
+        // Deceleration factor - higher values stop the momentum faster
+        const deceleration = 0.95;
+        // Calculate current velocity with exponential decay
+        const currentVelocity = initialVelocity * Math.pow(deceleration, elapsed / 16);
+        
+        if (Math.abs(currentVelocity) < 0.5 || !scrollContainerRef.current) {
+          setIsDragMomentum(false);
+          return;
+        }
+        
+        // Apply the velocity to scrollLeft
+        scrollContainerRef.current.scrollLeft -= currentVelocity;
+        
+        // Continue momentum
+        momentumScrollId = requestAnimationFrame(applyMomentum);
+      };
+      
+      momentumScrollId = requestAnimationFrame(applyMomentum);
+      
+      return () => {
+        cancelAnimationFrame(momentumScrollId);
+      };
+    }
+  }, [isDragMomentum, dragVelocity]);
+
   const handleFeatureClick = (feature: typeof features[0]) => {
-    toast({
-      title: `Exploring ${feature.title}`,
-      description: "Taking you to feature details...",
-      duration: 2000,
-    });
-    navigate(feature.link);
+    // Only navigate if not dragging
+    if (!isDragging && !isDragMomentum) {
+      toast({
+        title: `Exploring ${feature.title}`,
+        description: "Taking you to feature details...",
+        duration: 2000,
+      });
+      navigate(feature.link);
+    }
   };
 
-  // Improved smooth scroll function
+  // Improved smooth scroll function with adaptive scroll amount
   const scroll = (direction: "left" | "right") => {
     if (scrollContainerRef.current) {
       const container = scrollContainerRef.current;
+      
+      // Calculate the optimal scroll amount based on container width
+      const containerWidth = container.clientWidth;
       const cardWidth = container.querySelector('div')?.clientWidth || 300;
-      const scrollAmount = direction === "left" ? -cardWidth * 1.5 : cardWidth * 1.5;
+      
+      // Calculate how many cards can fit in the view
+      const cardsInView = Math.floor(containerWidth / cardWidth);
+      
+      // Scroll by slightly less than a full page for better context
+      const scrollAmount = direction === "left" 
+        ? -cardWidth * Math.max(1, cardsInView - 0.5) 
+        : cardWidth * Math.max(1, cardsInView - 0.5);
       
       // Smoother scroll with animation
       const currentScroll = container.scrollLeft;
       const targetScroll = currentScroll + scrollAmount;
       
       // Use enhanced smooth scrolling with better easing
-      smoothScroll(container, currentScroll, targetScroll, 500);
+      smoothScroll(container, currentScroll, targetScroll, 600);
     }
   };
 
-  // Enhanced smooth scroll function with easing
+  // Enhanced smooth scroll function with improved easing
   const smoothScroll = (element: HTMLElement, start: number, end: number, duration: number) => {
     const startTime = performance.now();
     let animationFrame: number;
@@ -246,17 +298,27 @@ export const Features = () => {
       
       if (elapsedTime > duration) {
         element.scrollLeft = end;
+        checkScrollPosition();
         return;
       }
       
-      // Enhanced easing function for smoother motion
+      // Use a more sophisticated easing curve for smoother acceleration/deceleration
       const progress = elapsedTime / duration;
       
-      // Use custom easing curve for more natural feel
-      // This creates a smooth acceleration and deceleration
-      const easeProgress = progress < 0.5
-        ? 4 * progress * progress * progress
-        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+      // Custom easing function - slightly modified for more responsive feel at start
+      // Uses a custom bezier curve approximation
+      let easeProgress: number;
+      
+      if (progress < 0.4) {
+        // Faster acceleration at the beginning
+        easeProgress = 2.5 * Math.pow(progress, 2);
+      } else if (progress < 0.65) {
+        // Maintain speed in the middle
+        easeProgress = 0.7 + (progress - 0.4) * 0.75;
+      } else {
+        // Gentle deceleration at the end
+        easeProgress = 0.89 + (1 - Math.pow(1 - progress, 3)) * 0.11;
+      }
       
       element.scrollLeft = start + (end - start) * easeProgress;
       animationFrame = requestAnimationFrame(animateScroll);
@@ -273,8 +335,11 @@ export const Features = () => {
     if (touchEnabled) return; // Skip for touch devices to avoid conflicts
     if (scrollContainerRef.current) {
       setIsDragging(true);
+      setIsDragMomentum(false);
+      setDragStartTime(performance.now());
       setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
       setScrollLeft(scrollContainerRef.current.scrollLeft);
+      setLastDragPosition(e.pageX);
       
       // Change cursor style to indicate dragging
       document.body.style.cursor = 'grabbing';
@@ -284,22 +349,49 @@ export const Features = () => {
     }
   };
 
-  // Enhanced mouse move event handler for drag scrolling
+  // Enhanced mouse move event handler for drag scrolling with velocity tracking
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || touchEnabled) return;
     e.preventDefault();
     
     if (scrollContainerRef.current) {
       const x = e.pageX - scrollContainerRef.current.offsetLeft;
+      
+      // Calculate velocity for momentum scrolling
+      const now = performance.now();
+      const elapsed = now - dragStartTime;
+      if (elapsed > 0) {
+        const deltaX = e.pageX - lastDragPosition;
+        // Adjust velocity by time elapsed for consistent experience across frame rates
+        const newVelocity = deltaX * (16 / Math.max(10, elapsed)); // normalize to ~60fps equivalent
+        
+        // Use exponential moving average for smoother velocity changes
+        setDragVelocity(prev => prev * 0.7 + newVelocity * 0.3);
+        
+        // Update tracking values
+        setDragStartTime(now);
+        setLastDragPosition(e.pageX);
+      }
+      
       // Use a dynamic multiplier for more responsive feeling
-      const sensitivity = 1.75;
-      const walk = (x - startX) * sensitivity;
+      // Slower for precision at low speeds, faster for long movements
+      const deltaX = x - startX;
+      const sensitivity = Math.min(2.5, 1 + Math.abs(deltaX) / 500);
+      const walk = deltaX * sensitivity;
+      
       scrollContainerRef.current.scrollLeft = scrollLeft - walk;
     }
   };
 
-  // Enhanced mouse up/leave event handler
+  // Enhanced mouse up/leave event handler with momentum
   const handleMouseUp = () => {
+    if (isDragging && Math.abs(dragVelocity) > 0.5) {
+      // Apply momentum only if there was significant velocity
+      setIsDragMomentum(true);
+    } else {
+      setIsDragMomentum(false);
+    }
+    
     setIsDragging(false);
     document.body.style.cursor = '';
     if (scrollContainerRef.current) {
@@ -307,42 +399,74 @@ export const Features = () => {
     }
   };
 
-  // Enhanced touch event handlers with better inertia
+  // Enhanced touch event handlers with improved inertia
   const handleTouchStart = (e: React.TouchEvent) => {
     if (scrollContainerRef.current) {
       setIsDragging(true);
+      setIsDragMomentum(false);
+      setDragStartTime(performance.now());
       setStartX(e.touches[0].pageX - scrollContainerRef.current.offsetLeft);
       setScrollLeft(scrollContainerRef.current.scrollLeft);
-      
-      // Prevent default for touch events to avoid page scrolling
-      // but allow scrolling within the container
-      if (e.cancelable) e.preventDefault();
+      setLastDragPosition(e.touches[0].pageX);
     }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging) return;
     
-    // Prevent default to stop page scrolling while dragging
-    if (e.cancelable) e.preventDefault();
-    
     if (scrollContainerRef.current) {
       const x = e.touches[0].pageX - scrollContainerRef.current.offsetLeft;
-      // Lower sensitivity for touch for better control
-      const sensitivity = 1.5;
-      const walk = (x - startX) * sensitivity;
+      
+      // Calculate velocity for momentum scrolling
+      const now = performance.now();
+      const elapsed = now - dragStartTime;
+      if (elapsed > 0) {
+        const deltaX = e.touches[0].pageX - lastDragPosition;
+        // Adjust velocity by time elapsed for consistent experience
+        const newVelocity = deltaX * (16 / Math.max(10, elapsed));
+        
+        // Use exponential moving average for smoother velocity changes
+        setDragVelocity(prev => prev * 0.7 + newVelocity * 0.3);
+        
+        // Update tracking values
+        setDragStartTime(now);
+        setLastDragPosition(e.touches[0].pageX);
+      }
+      
+      // Use an adaptive sensitivity based on how far the finger has moved
+      const deltaX = x - startX;
+      // Lower base sensitivity for touch for better control
+      // but scale up for longer movements for easier long-distance scrolling
+      const sensitivity = Math.min(1.8, 1.2 + Math.abs(deltaX) / 800);
+      const walk = deltaX * sensitivity;
       
       scrollContainerRef.current.scrollLeft = scrollLeft - walk;
     }
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    setIsDragging(false);
-    
-    // Add inertia effect on touch end
-    if (scrollContainerRef.current && e.changedTouches && e.changedTouches.length) {
-      // No additional inertia needed as native scroll momentum will take over
+  const handleTouchEnd = () => {
+    // On mobile, we rely more on the browser's native momentum scrolling
+    // but we still apply a bit of our custom momentum for a consistent experience
+    if (isDragging && Math.abs(dragVelocity) > 1.0) {
+      setIsDragMomentum(true);
+    } else {
+      setIsDragMomentum(false);
     }
+    
+    setIsDragging(false);
+  };
+
+  // Responsive grid layout configuration
+  const getCardWidth = () => {
+    // Adjust card width based on viewport
+    if (typeof window !== 'undefined') {
+      const width = window.innerWidth;
+      if (width < 640) return 'w-[260px]'; // Smaller on phones
+      if (width < 768) return 'w-[280px]'; // Small tablets
+      if (width < 1024) return 'w-[300px]'; // Larger tablets
+      return 'w-[320px]'; // Desktops
+    }
+    return 'w-[280px]'; // Default
   };
 
   return (
@@ -366,13 +490,14 @@ export const Features = () => {
         </div>
 
         <div className="relative mt-8 md:mt-16">
-          {/* Scroll buttons - removed violet accents */}
+          {/* Scroll buttons with improved positioning and visibility */}
           <div className="hidden md:block">
             <Button
               variant="outline"
               size="icon"
               onClick={() => scroll("left")}
-              className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 rounded-full shadow-lg bg-background/90 backdrop-blur-sm hover:bg-accent transition-all duration-300 ${showLeftGradient ? 'opacity-90' : 'opacity-0'}`}
+              className={`absolute -left-2 top-1/2 -translate-y-1/2 z-20 rounded-full shadow-lg bg-background/90 backdrop-blur-sm hover:bg-accent transition-all duration-300 ${showLeftGradient ? 'opacity-90' : 'opacity-0'}`}
+              aria-label="Scroll left"
             >
               ←
             </Button>
@@ -380,16 +505,17 @@ export const Features = () => {
               variant="outline"
               size="icon"
               onClick={() => scroll("right")}
-              className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 rounded-full shadow-lg bg-background/90 backdrop-blur-sm hover:bg-accent transition-all duration-300 ${showRightGradient ? 'opacity-90' : 'opacity-0'}`}
+              className={`absolute -right-2 top-1/2 -translate-y-1/2 z-20 rounded-full shadow-lg bg-background/90 backdrop-blur-sm hover:bg-accent transition-all duration-300 ${showRightGradient ? 'opacity-90' : 'opacity-0'}`}
+              aria-label="Scroll right"
             >
               →
             </Button>
           </div>
 
-          {/* Enhanced scrollable container with better touch handling */}
+          {/* Enhanced scrollable container with improved touch handling */}
           <div 
             ref={scrollContainerRef}
-            className="overflow-x-auto no-scrollbar pb-8 -mx-4 px-4 snap-x snap-mandatory"
+            className="overflow-x-auto no-scrollbar pb-8 -mx-4 px-4 snap-x snap-proximity lg:snap-mandatory"
             style={{
               scrollBehavior: touchEnabled ? 'auto' : 'smooth', // Use native scroll for touch devices, smooth for mouse
               scrollbarWidth: 'none',
@@ -413,34 +539,42 @@ export const Features = () => {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   whileHover={{ y: -5, scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                  viewport={{ once: true }}
+                  transition={{ 
+                    duration: 0.3,
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 20
+                  }}
+                  viewport={{ once: true, margin: "-10%" }}
                   onClick={() => handleFeatureClick(feature)}
-                  className="relative flex-shrink-0 w-[280px] md:w-[300px] group p-4 md:p-6 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-border hover:border-accent/60 snap-start"
+                  className={`relative flex-shrink-0 ${getCardWidth()} group p-4 md:p-6 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-border hover:border-accent/60 snap-start`}
                 >
-                  {/* Removed violet gradient overlay */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-accent/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  {/* Improved gradient overlay */}
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-accent/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
-                  {/* Icon with simplified hover effect */}
-                  <div className="relative">
+                  {/* Icon with improved hover effect */}
+                  <div className="relative mb-4">
                     <feature.icon 
-                      className={`h-8 w-8 md:h-12 md:w-12 mb-4 ${feature.color} group-hover:scale-110 transition-transform duration-300`} 
+                      className={`h-8 w-8 md:h-12 md:w-12 ${feature.color} transition-all duration-300 group-hover:scale-110`} 
                     />
                   </div>
                   
-                  {/* Title with simplified hover */}
-                  <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 group-hover:text-foreground transition-colors">
+                  {/* Title with improved hover effect */}
+                  <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 group-hover:text-foreground transition-colors duration-300">
                     {feature.title}
                   </h3>
                   
-                  <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
+                  {/* Description with improved hover effect */}
+                  <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors duration-300">
                     {feature.description}
                   </p>
                   
-                  {/* Arrow indicator without violet */}
+                  {/* Improved arrow indicator with better animation */}
                   <motion.div
                     className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300"
-                    whileHover={{ scale: 1.2, x: -2 }}
+                    initial={{ x: -5, opacity: 0 }}
+                    whileHover={{ scale: 1.2, x: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
                   >
                     <span className="text-foreground text-lg">→</span>
                   </motion.div>
@@ -449,12 +583,12 @@ export const Features = () => {
             </div>
           </div>
 
-          {/* Gradient overlays without violet tint */}
+          {/* Improved gradient overlays */}
           <div 
-            className={`absolute inset-y-0 left-0 w-12 md:w-20 bg-gradient-to-r from-background via-background/80 to-transparent pointer-events-none z-10 transition-opacity duration-300 ${showLeftGradient ? 'opacity-100' : 'opacity-0'}`} 
+            className={`absolute inset-y-0 left-0 w-12 md:w-24 bg-gradient-to-r from-background via-background/90 to-transparent pointer-events-none z-10 transition-opacity duration-300 ${showLeftGradient ? 'opacity-100' : 'opacity-0'}`} 
           />
           <div 
-            className={`absolute inset-y-0 right-0 w-12 md:w-20 bg-gradient-to-l from-background via-background/80 to-transparent pointer-events-none z-10 transition-opacity duration-300 ${showRightGradient ? 'opacity-100' : 'opacity-0'}`} 
+            className={`absolute inset-y-0 right-0 w-12 md:w-24 bg-gradient-to-l from-background via-background/90 to-transparent pointer-events-none z-10 transition-opacity duration-300 ${showRightGradient ? 'opacity-100' : 'opacity-0'}`} 
           />
         </div>
       </div>
