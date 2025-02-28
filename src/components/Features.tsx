@@ -375,9 +375,10 @@ export const Features = () => {
           />
         </div>
       </div>
-
-      {/* Add custom styles for no scrollbar */}
-      <style jsx global>{`
+      
+      {/* Fixed: Removed the jsx and global properties from the style tag */}
+      <style>
+        {`
         .no-scrollbar {
           scrollbar-width: none;
           -ms-overflow-style: none;
@@ -385,7 +386,8 @@ export const Features = () => {
         .no-scrollbar::-webkit-scrollbar {
           display: none;
         }
-      `}</style>
+        `}
+      </style>
     </section>
   );
 };
