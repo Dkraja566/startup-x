@@ -51,7 +51,7 @@ const Demo = () => {
               loop
             >
               <source
-                src="https://cdn.coverr.co/videos/coverr-artificial-intelligence-network-3733/1080p.mp4"
+                src="https://youtu.be/ZK-rNEhJIDs?si=WrEvuZSa1qIN0jtu"
                 type="video/mp4"
               />
               Your browser does not support the video tag.
