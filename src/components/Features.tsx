@@ -3,7 +3,7 @@ import { Check, Zap, Shield, BarChart, Cloud, Code2, Globe, Smartphone, Target, 
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Button } from "./ui/button";
 
 const features = [
@@ -125,6 +125,55 @@ export const Features = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [showLeftGradient, setShowLeftGradient] = useState(false);
+  const [showRightGradient, setShowRightGradient] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  // Check scroll position to update gradient visibility
+  const checkScrollPosition = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setShowLeftGradient(scrollLeft > 20);
+      setShowRightGradient(scrollLeft < scrollWidth - clientWidth - 20);
+    }
+  };
+
+  // Add event listener to update gradients on scroll
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', checkScrollPosition);
+      // Initialize gradients
+      checkScrollPosition();
+      
+      return () => {
+        scrollContainer.removeEventListener('scroll', checkScrollPosition);
+      };
+    }
+  }, []);
+
+  // Fix horizontal overflow on initial load
+  useEffect(() => {
+    const fixOverflowOnLoad = () => {
+      document.documentElement.style.overflowX = 'hidden';
+      document.body.style.overflowX = 'hidden';
+      
+      // Re-enable after initial layout is complete
+      setTimeout(() => {
+        document.documentElement.style.overflowX = '';
+        document.body.style.overflowX = '';
+      }, 1500);
+    };
+    
+    fixOverflowOnLoad();
+    
+    return () => {
+      document.documentElement.style.overflowX = '';
+      document.body.style.overflowX = '';
+    };
+  }, []);
 
   const handleFeatureClick = (feature: typeof features[0]) => {
     toast({
@@ -137,17 +186,96 @@ export const Features = () => {
 
   const scroll = (direction: "left" | "right") => {
     if (scrollContainerRef.current) {
-      const scrollAmount = direction === "left" ? -300 : 300;
-      scrollContainerRef.current.scrollBy({
-        left: scrollAmount,
-        behavior: "smooth"
-      });
+      const container = scrollContainerRef.current;
+      const cardWidth = container.querySelector('div')?.clientWidth || 300;
+      const scrollAmount = direction === "left" ? -cardWidth : cardWidth;
+      
+      // Smoother scroll with animation
+      const currentScroll = container.scrollLeft;
+      const targetScroll = currentScroll + scrollAmount;
+      
+      // Use smooth scrolling with easing
+      smoothScroll(container, currentScroll, targetScroll, 400);
     }
+  };
+
+  // Smooth scroll function with easing
+  const smoothScroll = (element: HTMLElement, start: number, end: number, duration: number) => {
+    const startTime = performance.now();
+    
+    const animateScroll = (currentTime: number) => {
+      const elapsedTime = currentTime - startTime;
+      
+      if (elapsedTime > duration) {
+        element.scrollLeft = end;
+        return;
+      }
+      
+      // Easing function: easeInOutCubic
+      const progress = elapsedTime / duration;
+      const easeProgress = progress < 0.5
+        ? 4 * progress * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+      
+      element.scrollLeft = start + (end - start) * easeProgress;
+      requestAnimationFrame(animateScroll);
+    };
+    
+    requestAnimationFrame(animateScroll);
+  };
+
+  // Mouse down event handler for drag scrolling
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (scrollContainerRef.current) {
+      setIsDragging(true);
+      setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
+      setScrollLeft(scrollContainerRef.current.scrollLeft);
+    }
+  };
+
+  // Mouse move event handler for drag scrolling
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    
+    if (scrollContainerRef.current) {
+      const x = e.pageX - scrollContainerRef.current.offsetLeft;
+      const walk = (x - startX) * 2; // Scroll speed multiplier
+      scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+    }
+  };
+
+  // Mouse up event handler to end drag scrolling
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Touch event handlers for mobile devices
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (scrollContainerRef.current) {
+      setIsDragging(true);
+      setStartX(e.touches[0].pageX - scrollContainerRef.current.offsetLeft);
+      setScrollLeft(scrollContainerRef.current.scrollLeft);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    
+    if (scrollContainerRef.current) {
+      const x = e.touches[0].pageX - scrollContainerRef.current.offsetLeft;
+      const walk = (x - startX) * 2;
+      scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
   };
 
   return (
     <section className="py-12 md:py-24 bg-background overflow-hidden">
-      <div className="container px-4 md:px-6">
+      <div className="container px-4 md:px-6 max-w-full md:max-w-[1200px] mx-auto">
         <div className="text-center space-y-4 mb-8 md:mb-16">
           <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -156,7 +284,7 @@ export const Features = () => {
             viewport={{ once: true }}
             className="max-w-[800px] mx-auto px-4"
           >
-            <h2 className="text-2xl md:text-4xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60 hover:to-primary transition-all duration-300">
+            <h2 className="text-2xl md:text-4xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary to-[#7E69AB] hover:to-[#6E59A5] transition-all duration-300">
               Features that set us apart
             </h2>
             <p className="mt-4 text-sm md:text-lg text-muted-foreground hover:text-foreground transition-colors duration-300">
@@ -166,13 +294,13 @@ export const Features = () => {
         </div>
 
         <div className="relative mt-8 md:mt-16">
-          {/* Scroll buttons - hidden on mobile, shown on larger screens */}
+          {/* Scroll buttons - improved with violet accents and better visibility */}
           <div className="hidden md:block">
             <Button
               variant="outline"
               size="icon"
               onClick={() => scroll("left")}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 rounded-full shadow-lg bg-background/80 backdrop-blur-sm hover:bg-background"
+              className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 rounded-full shadow-lg bg-background/90 backdrop-blur-sm hover:bg-[#E5DEFF] hover:text-[#6E59A5] transition-all duration-300 opacity-0 ${showLeftGradient ? 'opacity-100' : ''}`}
             >
               ←
             </Button>
@@ -180,23 +308,32 @@ export const Features = () => {
               variant="outline"
               size="icon"
               onClick={() => scroll("right")}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 rounded-full shadow-lg bg-background/80 backdrop-blur-sm hover:bg-background"
+              className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 rounded-full shadow-lg bg-background/90 backdrop-blur-sm hover:bg-[#E5DEFF] hover:text-[#6E59A5] transition-all duration-300 opacity-0 ${showRightGradient ? 'opacity-100' : ''}`}
             >
               →
             </Button>
           </div>
 
-          {/* Scrollable container */}
+          {/* Scrollable container with improved touch/mouse handling */}
           <div 
             ref={scrollContainerRef}
-            className="overflow-x-auto hide-scrollbar pb-8 -mx-4 px-4 snap-x snap-mandatory"
+            className="overflow-x-auto no-scrollbar pb-8 -mx-4 px-4 snap-x snap-mandatory"
             style={{
+              scrollBehavior: 'smooth',
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
               WebkitOverflowScrolling: 'touch'
             }}
+            onScroll={checkScrollPosition}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           >
-            <div className="flex gap-4 md:gap-6 min-w-max px-4">
+            <div className="flex gap-4 md:gap-6 px-4 min-w-max">
               {features.map((feature, index) => (
                 <motion.div
                   key={index}
@@ -206,13 +343,13 @@ export const Features = () => {
                   transition={{ duration: 0.3 }}
                   viewport={{ once: true }}
                   onClick={() => handleFeatureClick(feature)}
-                  className="relative flex-shrink-0 w-[280px] md:w-[300px] group p-4 md:p-6 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-border hover:border-primary/20 snap-start"
+                  className="relative flex-shrink-0 w-[280px] md:w-[300px] group p-4 md:p-6 bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-border hover:border-[#7E69AB]/40 snap-start"
                 >
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-[#E5DEFF]/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <feature.icon 
                     className={`h-8 w-8 md:h-12 md:w-12 mb-4 ${feature.color} group-hover:scale-110 transition-transform duration-300`} 
                   />
-                  <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 group-hover:text-primary transition-colors">
+                  <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3 group-hover:text-[#6E59A5] transition-colors">
                     {feature.title}
                   </h3>
                   <p className="text-sm md:text-base text-muted-foreground group-hover:text-foreground transition-colors">
@@ -222,18 +359,33 @@ export const Features = () => {
                     className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300"
                     whileHover={{ scale: 1.2, x: -2 }}
                   >
-                    <span className="text-primary text-lg">→</span>
+                    <span className="text-[#7E69AB] text-lg">→</span>
                   </motion.div>
                 </motion.div>
               ))}
             </div>
           </div>
 
-          {/* Gradient overlays for scroll indication */}
-          <div className="absolute inset-y-0 left-0 w-12 md:w-20 bg-gradient-to-r from-background to-transparent pointer-events-none z-10" />
-          <div className="absolute inset-y-0 right-0 w-12 md:w-20 bg-gradient-to-l from-background to-transparent pointer-events-none z-10" />
+          {/* Gradient overlays for scroll indication with conditional visibility */}
+          <div 
+            className={`absolute inset-y-0 left-0 w-12 md:w-20 bg-gradient-to-r from-background to-transparent pointer-events-none z-10 transition-opacity duration-300 ${showLeftGradient ? 'opacity-100' : 'opacity-0'}`} 
+          />
+          <div 
+            className={`absolute inset-y-0 right-0 w-12 md:w-20 bg-gradient-to-l from-background to-transparent pointer-events-none z-10 transition-opacity duration-300 ${showRightGradient ? 'opacity-100' : 'opacity-0'}`} 
+          />
         </div>
       </div>
+
+      {/* Add custom styles for no scrollbar */}
+      <style jsx global>{`
+        .no-scrollbar {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </section>
   );
 };

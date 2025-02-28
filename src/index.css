@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -49,6 +50,11 @@
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Violet accents */
+    --violet-light: 257 100% 94%;
+    --violet-medium: 262 51% 54%;
+    --violet-dark: 264 54% 50%;
   }
 
   .dark {
@@ -87,6 +93,11 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Violet accents dark mode */
+    --violet-light: 257 30% 30%;
+    --violet-medium: 262 51% 54%;
+    --violet-dark: 264 54% 40%;
   }
 }
 
@@ -97,5 +108,29 @@
 
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
+  }
+  
+  html {
+    overflow-x: hidden;
+  }
+}
+
+/* Extra fix for mobile overflow issues */
+#root {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+
+/* Define no-scrollbar utility class */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
